@@ -1,7 +1,7 @@
 #!/bin/bash
 
 minifier() {
-  echo "#!/bin/${shell:-bash}"
+  echo "#!${shell:-/bin/bash}"
   sed -r ':a;N;$!ba;s/(^(\s*(#.*\n)?|\n+))//gm' "$@" |
     sed -r "s/(=|echo )(''|\"\")/\1/gm" |
     sed -r 's/"([A-Za-z0-9_.-]+)"/\1/gm' |
