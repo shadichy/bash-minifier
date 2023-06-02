@@ -3,20 +3,20 @@
 minifier() {
   echo "#!/bin/${shell:-bash}"
   sed -r ':a;N;$!ba;s/(^(\s*(#.*\n)?|\n+))//gm' "$@" |
-  sed -r "s/(=|echo )(''|\"\")/\1/gm" |
-  sed -r 's/"([A-Za-z0-9_.-]+)"/\1/gm' |
-  sed -r 's/\)\s+\{/\)\{/gm' |
-  sed -r 's/\s*(;|\((\)|\(|!|\?)|[<>][<=>])\s*/\1/gm' |
-  sed -r 's/\s+(\))/\1/gm' |
-  sed -r 's/==/=/gm' |
-  sed -r 's/([^<])\s+</\1</gm' |
-  sed -r ':a;N;$!ba;s/([^\\])\\\n/\1 /gm' |
-  sed -r ':a;N;$!ba;s/^([^\(]+)\)\s*\n*(.+)$/\1)\2/gm' |
-  sed -r ':a;N;$!ba;s/\s*\n*((;|\||&){1,2})\s*\n*/\1/gm' |
-  sed -r 's/\s+$//gm' |
-  sed -r 's/"\$\?"/\$\?/gm' |
-  sed -r "s/\((\"\"|'')\)/\(\)/gm" |
-  sed -r 's/ {2,}/ /gm'
+    sed -r "s/(=|echo )(''|\"\")/\1/gm" |
+    sed -r 's/"([A-Za-z0-9_.-]+)"/\1/gm' |
+    sed -r 's/\)\s+\{/\)\{/gm' |
+    sed -r 's/\s*(;|\((\)|\(|!|\?)|[<>][<=>])\s*/\1/gm' |
+    sed -r 's/\s+(\))/\1/gm' |
+    sed -r 's/==/=/gm' |
+    sed -r 's/([^<])\s+</\1</gm' |
+    sed -r ':a;N;$!ba;s/([^\\])\\\n/\1 /gm' |
+    sed -r ':a;N;$!ba;s/^([^\(]+)\)\s*\n*(.+)$/\1)\2/gm' |
+    sed -r ':a;N;$!ba;s/\s*\n*((;|\||&){1,2})\s*\n*/\1/gm' |
+    sed -r 's/\s+$//gm' |
+    sed -r 's/"\$\?"/\$\?/gm' |
+    sed -r "s/\((\"\"|'')\)/\(\)/gm" |
+    sed -r 's/ {2,}/ /gm'
   return $?
 }
 
@@ -30,7 +30,14 @@ while [ "$*" ]; do
   case "$1" in
   -o | --output) out=$2 && shift ;;
   -o=* | --output=*) out=${1#*=} ;;
-  --shell | -sh) shell=$2 && shift ;;
+  --shell | -sh)
+    if [[ $2 = "/"* ]]; then
+      shell=$2
+    else
+      shell="/usr/bin/env $2"
+    fi
+    shift
+    ;;
   --shell=* | -sh=*) shell=${1#*=} ;;
   -h | --help)
     cat <<EOF
